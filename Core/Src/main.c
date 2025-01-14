@@ -92,6 +92,33 @@ void set_pin_input(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 	HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
 }
 
+#define DS18B20_PORT GPIOA
+#define DS18B20_PIN GPIO_PIN_1
+
+uint8_t DS18B20_Init(void)
+{
+	uint8_t response = 0;
+	set_pin_output(DS18B20_PORT, DS18B20_PIN);
+	HAL_GPIO_WritePin(DS18B20_PORT, DS18B20_PIN, 0);
+	delay(480);
+
+	set_pin_input(DS18B20_PORT, DS18B20_PIN);
+	delay(80);
+
+	if (!(HAL_GPIO_ReadPin(DS18B20_PORT, DS18B20_PIN)))
+	{
+		response = 1;
+	}
+	else
+	{
+		response = -1;
+	}
+
+	delay(400);
+	return response;
+}
+
+
 /* USER CODE END 0 */
 
 /**
