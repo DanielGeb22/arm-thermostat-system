@@ -68,11 +68,12 @@ void delay(uint16_t time)
 	while ((__HAL_TIM_GET_COUNTER(&htim6)) < time);
 }
 
-uint8_t rh_byte1, rh_byte2, temp_byte1, temp_byte2;
+uint8_t temp_byte1, temp_byte2 = 0;
 uint16_t SUM, RH, TEMP;
 
 float temperature = 0;
 uint8_t presence = 0;
+int count = 0;
 
 void set_pin_output(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
@@ -203,6 +204,8 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
+  HAL_TIM_Base_Start(&htim6);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -212,6 +215,25 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	presence = DS18B20_Init();
+	HAL_Delay(1);
+	DS18B20_Write(0xCC);		// Skip ROM
+	DS18B20_Write(0x44);		// Convert T
+	HAL_Delay(800);
+
+	presence = DS18B20_Init();
+	HAL_Delay(1);
+	DS18B20_Write(0xCC);		// Skip ROM
+	DS18B20_Write(0xBE);		// Read Scratchpad
+
+	temp_byte1 = DS18B20_Read();
+	temp_byte2 = DS18B20_Read();
+	TEMP = (temp_byte2<<8) | temp_byte1;
+	temperature = (float)TEMP / 16;
+
+	HAL_Delay(3000);
+
   }
   /* USER CODE END 3 */
 }
@@ -316,7 +338,7 @@ static void MX_TIM6_Init(void)
   htim6.Instance = TIM6;
   htim6.Init.Prescaler = 50-1;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim6.Init.Period = 65535-1;
+  htim6.Init.Period = 0xffff-1;
   htim6.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
   {
