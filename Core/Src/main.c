@@ -68,12 +68,12 @@ void delay(uint16_t time)
 	while ((__HAL_TIM_GET_COUNTER(&htim6)) < time);
 }
 
-uint8_t temp_byte1, temp_byte2 = 0;
+uint8_t temp_byte1, temp_byte2;
 uint16_t SUM, RH, TEMP;
 
 float temperature = 0;
 uint8_t presence = 0;
-int count = 0;
+uint64_t rom_code = 0;
 
 void set_pin_output(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
@@ -94,7 +94,7 @@ void set_pin_input(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 }
 
 #define DS18B20_PORT GPIOA
-#define DS18B20_PIN GPIO_PIN_1
+#define DS18B20_PIN GPIO_PIN_4
 
 uint8_t DS18B20_Init(void)
 {
@@ -132,13 +132,13 @@ void DS18B20_Write(uint8_t data)
 			delay(1);	// pull low for 1us
 
 			set_pin_input(DS18B20_PORT, DS18B20_PIN);
-			delay(60);	// then release pin for 60us
+			delay(50);	// then release pin for 60us
 		}
 		else // if i-th bit is low, write 0
 		{
 			set_pin_output(DS18B20_PORT, DS18B20_PIN);
 			HAL_GPIO_WritePin(DS18B20_PORT, DS18B20_PIN, 0);
-			delay(60);	// pull low for 60us
+			delay(50);	// pull low for 60us
 
 			set_pin_input(DS18B20_PORT, DS18B20_PIN);	// then release pin
 		}
@@ -156,14 +156,14 @@ uint8_t DS18B20_Read(void)
 		set_pin_output(DS18B20_PORT, DS18B20_PIN);
 
 		HAL_GPIO_WritePin(DS18B20_PORT, DS18B20_PIN, 0);
-		delay(2);
+		delay(1);
 
 		set_pin_input(DS18B20_PORT, DS18B20_PIN);
 		if (HAL_GPIO_ReadPin(DS18B20_PORT, DS18B20_PIN)) // if pin is high, read 1
 		{
 			value |= 1<<i;
 		}
-		delay(60);
+		delay(50);
 	}
 	return value;
 }
@@ -218,6 +218,7 @@ int main(void)
 
 	presence = DS18B20_Init();
 	HAL_Delay(1);
+
 	DS18B20_Write(0xCC);		// Skip ROM
 	DS18B20_Write(0x44);		// Convert T
 	HAL_Delay(800);
@@ -229,8 +230,8 @@ int main(void)
 
 	temp_byte1 = DS18B20_Read();
 	temp_byte2 = DS18B20_Read();
-	TEMP = (temp_byte2<<8) | temp_byte1;
-	temperature = (float)TEMP / 16;
+	TEMP = (temp_byte2<<8)|temp_byte1;
+	temperature = (float)TEMP/16;
 
 	HAL_Delay(3000);
 
@@ -373,10 +374,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PA1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1;
+  /*Configure GPIO pin : PA4 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
