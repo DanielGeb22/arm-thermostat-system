@@ -75,7 +75,7 @@ uint16_t SUM, RH, TEMP;
 
 float temperature = 0;
 uint8_t presence = 0;
-uint64_t rom_code = 0;
+int pwmValue = 450;
 
 void set_pin_output(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin)
 {
@@ -208,6 +208,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_TIM_Base_Start(&htim6);
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 
   /* USER CODE END 2 */
 
@@ -237,6 +238,24 @@ int main(void)
 	temperature = (float)TEMP/16;
 
 	HAL_Delay(3000);
+
+	while (pwmValue < 1800) {
+		pwmValue += 5;
+		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
+		HAL_Delay(2);
+	}
+
+	while (pwmValue > 500) {
+		pwmValue -= 5;
+		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
+		HAL_Delay(2);
+	}
+//	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 500);
+//	HAL_Delay(500);
+//	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500);
+//	HAL_Delay(500);
+//	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2500);
+
 
   }
   /* USER CODE END 3 */
