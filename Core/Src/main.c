@@ -239,22 +239,28 @@ int main(void)
 
 	HAL_Delay(3000);
 
-	while (pwmValue < 1800) {
-		pwmValue += 5;
-		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
-		HAL_Delay(2);
-	}
-
 	while (pwmValue > 500) {
 		pwmValue -= 5;
 		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
 		HAL_Delay(2);
 	}
-//	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 500);
+
+	while (pwmValue > 370) {
+		pwmValue -= 5;
+		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
+		HAL_Delay(200);
+	}
+	while (pwmValue < 2500) {
+		pwmValue += 5;
+		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
+		HAL_Delay(2);
+	}
+
+//	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 500);		// start
 //	HAL_Delay(500);
-//	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500);
+//	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500);		// middle
 //	HAL_Delay(500);
-//	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2500);
+//	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2500);		// end
 
 
   }
