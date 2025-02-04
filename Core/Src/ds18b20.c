@@ -5,6 +5,7 @@
  *      Author: danie
  */
 #include "main.h"
+#include "gpio.h"
 #include "ds18b20.h"
 
 extern TIM_HandleTypeDef htim6;
