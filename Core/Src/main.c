@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 
 #include "ds18b20.h"
+#include "servo.h"
 #include "stdio.h"
 
 /* USER CODE END Includes */
@@ -71,6 +72,9 @@ uint16_t SUM, RH, TEMP;
 float temperature = 0;
 uint8_t presence = 0;
 int pwmValue = 2500;
+
+float low_threshold = 0;
+float high_threshold = 0;
 
 
 /* USER CODE END 0 */
@@ -141,27 +145,12 @@ int main(void)
 
 	HAL_Delay(3000);
 
-	while (pwmValue > 500) {	// Move arm to the right at constant speed
-		pwmValue -= 5;
-		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
-		HAL_Delay(2);
+	// Check if temperature less than low threshold
+	if (temperature < low_threshold) {
+		toggle_power_button();
 	}
 
-	while (pwmValue > 370) {	// Once button is reached, hold down for 4 seconds
-		pwmValue -= 5;			// to turn off AC by gradually pushing arm down
-		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
-		if (pwmValue > 400) {
-			HAL_Delay(200);
-		}
-		else {
-			HAL_Delay(500);
-		}
-	}
-	while (pwmValue < 2500) {	// Arm goes back to initial state after button press
-		pwmValue += 5;
-		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
-		HAL_Delay(2);
-	}
+
 
 //	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 500);		// start
 //	HAL_Delay(500);
