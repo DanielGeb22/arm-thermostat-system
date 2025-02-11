@@ -8,7 +8,7 @@
 #include "gpio.h"
 #include "ds18b20.h"
 
-extern TIM_HandleTypeDef htim6;
+extern TIM_HandleTypeDef htim6;		// defined as extern in order to use the Timer 6 declaration here
 
 #define DS18B20_PORT GPIOA
 #define DS18B20_PIN GPIO_PIN_4

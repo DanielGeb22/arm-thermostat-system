@@ -149,6 +149,10 @@ int main(void)
 	if (temperature < low_threshold) {
 		toggle_power_button();
 	}
+	// Check if temperature greater than high threshold
+	else if (temperature > high_threshold) {
+		toggle_power_button();
+	}
 
 
 

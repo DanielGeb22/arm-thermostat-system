@@ -10,8 +10,8 @@
 
 #include "main.h"
 
-extern int pwmValue;
-extern TIM_HandleTypeDef htim2;
+extern int pwmValue;				// use pwmValue variable declared in main.c
+extern TIM_HandleTypeDef htim2;		// use htim2 variable declared in main.c
 
 void toggle_power_button(void) {
 	while (pwmValue > 500) {	// Move arm to the right at constant speed
