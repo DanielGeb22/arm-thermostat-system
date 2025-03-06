@@ -14,16 +14,16 @@ extern int pwmValue;				// use pwmValue variable declared in main.c
 extern TIM_HandleTypeDef htim2;		// use htim2 variable declared in main.c
 
 void toggle_power_button(void) {
-	while (pwmValue > 1400) {	// Move arm to the right at constant speed
+	while (pwmValue > 1270) {	// Move arm to the right at constant speed (FINAL VALUES)
 		pwmValue -= 5;
 		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
 		HAL_Delay(2);
 	}
 
-	while (pwmValue > 1200) {	// Once button is reached, hold down for 4 seconds
+	while (pwmValue > 1100) {	// Once button is reached, hold down for 4 seconds
 		pwmValue -= 5;			// to turn off AC by gradually pushing arm down
 		__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pwmValue);
-		if (pwmValue > 1300) {
+		if (pwmValue > 1180) {
 			HAL_Delay(200);
 		}
 		else {
