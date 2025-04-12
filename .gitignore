@@ -1,6 +1,29 @@
-.settings/
-.metadata/
+# STM32CubeIDE specific files
 Debug/
 Release/
 *.launch
+*.log
+*.tmp
+
+# STM32 build files
+*.o
+*.d
+*.elf
+*.hex
+*.bin
+*.map
+*.lst
+
+# STM32CubeMX specific files
+*.ioc~
+
+# Eclipse project files
+.cproject
+.project
+.mxproject
+.settings/
+.metadata/
+
+# OS junk
 .DS_Store
+Thumbs.db
