@@ -73,9 +73,13 @@ float temperature = 0;
 uint8_t presence = 0;
 int pwmValue = 2500;
 
-float low_threshold = 0;
-float high_threshold = 0;
+#define LOW_TH		24.0		// °C
+#define HIGH_TH		26.0		// °C
+#define CYCLE		300000UL	// 5 min = 300 s = 300,000 ms
 
+typedef enum {AC_ON, AC_OFF} AC_state_t;	// Defines AC states
+AC_state_t ac = AC_OFF;						// Default state at the start
+uint32_t last_toggle = 0;
 
 /* USER CODE END 0 */
 
@@ -143,17 +147,28 @@ int main(void)
 	TEMP = (temp_byte2<<8)|temp_byte1;
 	temperature = (float)TEMP/16;
 
+	uint32_t now = HAL_GetTick();	// time since boot in milliseconds
+
 	HAL_Delay(3000);
 
-	// Check if temperature less than low threshold
-	if (temperature < low_threshold) {
-		toggle_power_button();
+	switch (ac) {
+	case AC_OFF:
+		// Check if temperature less than low threshold
+		if (temperature < LOW_TH && (now - last_toggle) > CYCLE) {
+			toggle_power_button();
+			ac = AC_ON;
+			last_toggle = now;
+		}
+		break;
+	case AC_ON:
+		// Check if temperature greater than high threshold
+		if (temperature > HIGH_TH && (now - last_toggle) > CYCLE) {
+			toggle_power_button();
+			ac = AC_OFF;
+			last_toggle = now;
+		}
+		break;
 	}
-	// Check if temperature greater than high threshold
-	else if (temperature > high_threshold) {
-		toggle_power_button();
-	}
-
 
 
 //	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 500);		// start
