@@ -1,2 +1,2 @@
-# stm32-ac-climate-control
-ARM-based AC Climate Control system for residential apartment
+# ARM-based Thermostat System
+Custom solution to regulate temperature inside college apartment
